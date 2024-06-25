@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RabbitMQ Data Fetcher</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <h1>RabbitMQ Data Fetcher</h1>
+    <button onclick="connectToRabbitMQ()">Fetch Data</button>
+    <pre id="output"></pre>
+
+    <script>
+        function connectToRabbitMQ() {
+            const client = Stomp.client('ws://10.194.101.222:15674/ws');
+            const login = 'guest'; // Replace with your RabbitMQ username
+            const passcode = 'guest'; // Replace with your RabbitMQ password
+
+            client.connect(login, passcode, onConnect, onError);
+
+            function onConnect() {
+                console.log('Connected to RabbitMQ');
+                client.subscribe('/queue/CADAVL.SIRI.VM.GZip', onMessage);
+            }
+
+            function onError(error) {
+                console.error('Connection error: ', error);
+                document.getElementById('output').textContent = 'Connection error: ' + error;
+            }
+
+            function onMessage(message) {
+                console.log('Received message: ', message.body);
+                document.getElementById('output').textContent = 'Received message: ' + message.body;
+            }
+        }
+    </script>
+</body>
+</html>
